@@ -27,14 +27,6 @@ server_scripts {
 	'server/**/*.js'
 }
 
-files {
-	'ui/*.ogg',
-	'ui/css/*.css',
-	'ui/js/*.js',
-	'ui/index.html',
-}
-
-ui_page 'ui/index.html'
 
 provides {
 	'mumble-voip',

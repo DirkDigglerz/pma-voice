@@ -118,17 +118,15 @@ CreateThread(function()
 			Wait(100)
 		end
 		-- Leave the check here as we don't want to do any of this logic
-		if GetConvarInt('voice_enableUi', 1) == 1 then
-			local curTalkingStatus = MumbleIsPlayerTalking(PlayerId()) == 1
-			if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= curTalkingStatus then
-				lastRadioStatus = radioPressed
-				lastTalkingStatus = curTalkingStatus
-				sendUIMessage({
-					usingRadio = lastRadioStatus,
-					talking = lastTalkingStatus
-				})
-			end
-		end
+
+    local curTalkingStatus = MumbleIsPlayerTalking(PlayerId()) == 1
+    if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= curTalkingStatus then
+      lastRadioStatus = radioPressed
+      lastTalkingStatus = curTalkingStatus
+      LocalPlayer.state.isTalking = curTalkingStatus
+      LocalPlayer.state.isRadioPressed = radioPressed
+    end
+		
 
 		if voiceState == "proximity" then
 			addNearbyPlayers()
