@@ -217,7 +217,7 @@ end
 ---plays the mic click if the player has them enabled.
 ---@param clickType boolean whether to play the 'on' or 'off' click.
 function playMicClicks(clickType)
-	if micClicks ~= 'true' then return logger.verbose("Not playing mic clicks because client has them disabled") end
+	if micClicks ~= true then return logger.verbose("Not playing mic clicks because client has them disabled") end
 	-- TODO: Add customizable radio click volumes
 	sendUIMessage({
 		sound = (clickType and "audio_on" or "audio_off"),
@@ -261,9 +261,8 @@ function setVoiceProperty(type, value)
 			radioEnabled = value
 		})
 	elseif type == "micClicks" then
-		local val = tostring(value)
-		micClicks = val
-		SetResourceKvp('pma-voice_enableMicClicks', val)
+		micClicks = value == true or value == "true"
+		SetResourceKvp('pma-voice_enableMicClicks', tostring(micClicks))
 	end
 end
 
@@ -290,20 +289,21 @@ end)
 
 
 if gameVersion == 'redm' then
-	CreateThread(function()
-		while true do
-			if IsControlJustPressed(0, 0xA5BDCD3C --[[ Right Bracket ]]) then
-				ExecuteCommand('cycleproximity')
-			end
-			if IsControlJustPressed(0, 0x430593AA --[[ Left Bracket ]]) then
-				ExecuteCommand('+radiotalk')
-			elseif IsControlJustReleased(0, 0x430593AA --[[ Left Bracket ]]) then
-				ExecuteCommand('-radiotalk')
-			end
+	function on_key_up() end
 
-			Wait(0)
-		end
-	end)
+	local KEY_F11 = 0x7A
+
+	RegisterRawKeymap("pma-voice_proximityCycle", on_key_up, function()
+		ExecuteCommand('cycleproximity')
+	end, KEY_F11, true)
+
+	local KEY_LEFT_ALT = 0xA4
+
+	RegisterRawKeymap("pma-voice_radioTalk", function()
+			ExecuteCommand('+radiotalk')
+	end, function()
+			ExecuteCommand('-radiotalk')
+	end, KEY_LEFT_ALT, true)
 end
 
 --- handles initializiation for whenever radio or call data changes
